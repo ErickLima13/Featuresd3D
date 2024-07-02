@@ -1,6 +1,8 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public abstract class ObjectsOfInteraction : MonoBehaviour
+public class ObjectsOfInteraction : MonoBehaviour
 {
     private Interaction interactionScript;
 
