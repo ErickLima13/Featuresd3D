@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 
     public float distanceInteraction;
 
+    public Sprite[] icons; 
+
     private void Awake()
     {
         PlayerFps = FindObjectOfType<PlayerFps>().transform;

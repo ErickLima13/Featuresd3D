@@ -1,10 +1,8 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Interaction : MonoBehaviour
 {
-
     private Transform mainCamera;
 
     private Ray ray;
@@ -15,9 +13,6 @@ public class Interaction : MonoBehaviour
     public float rayRange;
 
     public LayerMask interactionLayer;
-
-    public TextMeshProUGUI messageInteraction;
-
     public Image crossHair;
 
     private bool isInteraction;
@@ -45,22 +40,24 @@ public class Interaction : MonoBehaviour
         }
         else
         {
-            objInteraction = null;
-            crossHair.color = Color.white;
-            SetMessage("");
-            isInteraction = false;
+            if (objInteraction != null)
+            {
+                objInteraction.SendMessage("EndInteraction", SendMessageOptions.DontRequireReceiver);
+                objInteraction = null;
+                crossHair.color = Color.white;
+                isInteraction = false;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.E) && objInteraction != null)
         {
-            objInteraction.SendMessage("Interaction", SendMessageOptions.DontRequireReceiver);
+            objInteraction.SendMessage("OnInteraction", SendMessageOptions.DontRequireReceiver);
+
+            // onde vai chamar o metodo da interface.
         }
     }
 
-    public void SetMessage(string message)
-    {
-        messageInteraction.text = message;
-    }
+
 
 }
 
