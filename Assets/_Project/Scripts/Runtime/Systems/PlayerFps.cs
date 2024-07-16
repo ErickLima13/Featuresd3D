@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerFps : MonoBehaviour
 {
     private CharacterController controller;
+    private GameManager gameManager;
 
     [Header("Attributes")]
     public float baseSpeed;
@@ -24,12 +25,18 @@ public class PlayerFps : MonoBehaviour
     private void Start()
     {
         controller = GetComponent<CharacterController>();
+        gameManager = FindObjectOfType<GameManager>();
         gravity = Physics.gravity.y;
         speed = baseSpeed;
     }
 
     private void Update()
     {
+        if (gameManager.NonGameplay())
+        {
+            return;
+        }
+
         Move();
         ControlGravity();
         Jump();  

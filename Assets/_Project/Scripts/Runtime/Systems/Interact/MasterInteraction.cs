@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+
 public class MasterInteraction : MonoBehaviour
 {
     private GameManager gameManager;
@@ -42,6 +44,12 @@ public class MasterInteraction : MonoBehaviour
 
     private void Update()
     {
+        if (gameManager.NonGameplay())
+        {
+            canvas.SetActive(false);
+            return;
+        }
+
         distance = Vector3.Distance(target.position, player.position);
 
         if (!isShowDistance && distance <= rangeInteraction)
@@ -107,7 +115,7 @@ public class MasterInteraction : MonoBehaviour
                 {
                     icon.enabled = true;
                 }
-                
+
             }
         }
 
@@ -124,8 +132,22 @@ public class MasterInteraction : MonoBehaviour
     private void OnInteraction()
     {
         icon.enabled = false;
-        SetMessage(objeto.msgOnInteraction);
         onInteraction = true;
+
+        if (!objeto.hasItem)
+        {
+            SetMessage(objeto.msgOnInteraction);
+        }
+        else if (objeto.DropItem())
+        {
+            gameManager.itemObject = Instantiate(objeto.item, gameManager.inspector.transform);
+            gameManager.itemObject.layer = 5;
+            gameManager.OnInspector();
+        }
+        else
+        {
+            SetMessage(objeto.msgOnInteraction);
+        }
     }
 
     private void EndInteraction()

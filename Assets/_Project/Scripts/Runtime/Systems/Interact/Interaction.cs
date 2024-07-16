@@ -5,6 +5,8 @@ public class Interaction : MonoBehaviour
 {
     private Transform mainCamera;
 
+    private GameManager gameManager;
+
     private Ray ray;
     private RaycastHit hitInfo;
 
@@ -20,11 +22,16 @@ public class Interaction : MonoBehaviour
     private void Start()
     {
         mainCamera = Camera.main.transform;
-
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void Update()
     {
+        if (gameManager.NonGameplay())
+        {
+            return;
+        }
+
         ray.origin = mainCamera.position;
         ray.direction = mainCamera.forward;
 
