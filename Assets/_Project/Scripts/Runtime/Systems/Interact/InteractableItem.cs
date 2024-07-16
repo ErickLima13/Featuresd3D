@@ -11,7 +11,7 @@ public class InteractableItem : ScriptableObject
 
     public int percItem; // chance percentual de encontrar o item
 
-    public GameObject item;
+    public Item item;
 
     public bool DropItem()
     {

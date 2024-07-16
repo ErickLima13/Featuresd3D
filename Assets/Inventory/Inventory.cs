@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
+    public static Inventory Instance;
+    public GameObject gameManager;
+
+    public GameObject panelInventory;
+
     [Header("Panel Description")]
     public GameObject panelDescription;
     public Image imageItem;
@@ -20,12 +25,16 @@ public class Inventory : MonoBehaviour
     public Button btnCheck;
     public Button btnDrop;
 
-    [SerializeField] private Item itemSelect;
+    public Item itemSelect;
 
     [Header("Dialog")]
     public GameObject panelDialog;
     public Image imgItemDialog;
 
+    private void Awake()
+    {
+        CheckSingleton();
+    }
 
     private void Start()
     {
@@ -34,12 +43,15 @@ public class Inventory : MonoBehaviour
         btnDrop.onClick.AddListener(() => OnBtnClick(2));
     }
 
-    private void Update()
+    private void CheckSingleton()
     {
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Instance != null)
         {
-            UpdateInventory();
+            Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
     }
 
     public void UpdateInventory()
@@ -80,7 +92,6 @@ public class Inventory : MonoBehaviour
             return;
         }
 
-
         imageItem.sprite = itemSlot[idSlot].imagem;
         nameItem.text = itemSlot[idSlot].name;
         descriptionItem.text = itemSlot[idSlot].description;
@@ -97,19 +108,14 @@ public class Inventory : MonoBehaviour
         switch (idButton)
         {
             case 0:
-
+                gameManager.SendMessage("UseItem", SendMessageOptions.DontRequireReceiver);
                 break;
             case 1:
-
+                gameManager.SendMessage("VerifyItem", SendMessageOptions.DontRequireReceiver);
                 break;
             case 2:
-
-
-
                 imgItemDialog.sprite = itemSelect.imagem;
                 panelDialog.SetActive(true);
-
-
                 break;
         }
     }
@@ -128,6 +134,18 @@ public class Inventory : MonoBehaviour
                 UpdateInventory();
                 break;
         }
+    }
+
+    public void OpenInventory()
+    {
+        UpdateInventory();
+        panelInventory.SetActive(!panelInventory.activeSelf);
+    }
+
+    public void GetItem(Item item)
+    {
+        itemSlot.Add(item);
+        UpdateInventory();
     }
 
     //Minhas ideias

@@ -140,9 +140,12 @@ public class MasterInteraction : MonoBehaviour
         }
         else if (objeto.DropItem())
         {
-            gameManager.itemObject = Instantiate(objeto.item, gameManager.inspector.transform);
-            gameManager.itemObject.layer = 5;
-            gameManager.OnInspector();
+            Inventory.Instance.GetItem(objeto.item);
+            SetMessage("Encontrou o " + objeto.item.nameItem);
+
+            //gameManager.itemObject = Instantiate(objeto.item, gameManager.inspector.transform);
+            //gameManager.itemObject.layer = 5;
+            //gameManager.OnInspector();
         }
         else
         {

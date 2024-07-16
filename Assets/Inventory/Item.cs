@@ -7,6 +7,7 @@ public class Item : ScriptableObject
     public Sprite imagem;
     public string nameItem;
     public string description;
+    public GameObject model3D;
 
     [Header("Action Buttons")]
     public bool use;

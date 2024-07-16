@@ -5,7 +5,7 @@ using UnityEngine;
 
 public enum GameState
 {
-    Gameplay, Item
+    Gameplay, Item, Inventory
 }
 
 public class GameManager : MonoBehaviour
@@ -44,16 +44,20 @@ public class GameManager : MonoBehaviour
         {
             case GameState.Gameplay:
                 ShowMap();
+                ControlInventory();
                 break;
             case GameState.Item:
                 CheckItem();
+                break;
+            case GameState.Inventory:
+                ControlInventory();
                 break;
         }
     }
 
     public void CheckItem()
     {
-        if (Input.GetKey(KeyCode.I))
+        if (Input.GetKey(KeyCode.C))
         {
             OnInspector();
             Destroy(itemObject);
@@ -77,6 +81,29 @@ public class GameManager : MonoBehaviour
         if (Input.GetKey(KeyCode.O))
         {
             itemObject.transform.rotation = initRotation;
+        }
+    }
+
+    private void ControlInventory()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Inventory.Instance.OpenInventory();
+
+            if (NonGameplay())
+            {
+                ChangeState(GameState.Gameplay);
+                gameplayCanvas.SetActive(true);
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+            else
+            {
+                ChangeState(GameState.Inventory);
+                gameplayCanvas.SetActive(false);
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.Confined;
+            }  
         }
     }
 
@@ -117,15 +144,44 @@ public class GameManager : MonoBehaviour
                 }
 
                 currentState = GameState.Item;
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+                Inventory.Instance.OpenInventory();
+
                 break;
             case false:
-                currentState = GameState.Gameplay;
+
+                ChangeState(GameState.Inventory);
+                Inventory.Instance.OpenInventory();
+                gameplayCanvas.SetActive(false);
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.Confined;
+
                 break;
         }
+    }
+
+    private void UseItem()
+    {
+
+    }
+
+    private void VerifyItem()
+    {
+        itemObject = Instantiate(Inventory.Instance.itemSelect.model3D,inspector.transform); 
+        itemObject.layer = 5;
+        OnInspector();
     }
 
     public bool NonGameplay()
     {
         return currentState != GameState.Gameplay;
     }
+
+    private void ChangeState(GameState state)
+    {
+        currentState = state;
+    }
+
+
 }
