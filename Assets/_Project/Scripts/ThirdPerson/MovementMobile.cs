@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -22,7 +19,6 @@ public class MovementMobile : MonoBehaviour
 
     public Vector3 movement;
 
-
     private void Start()
     {
         cam = Camera.main;
@@ -40,7 +36,7 @@ public class MovementMobile : MonoBehaviour
         mousePos.z = 100f;
         mousePos = cam.ScreenToWorldPoint(mousePos);
 
-        Debug.DrawRay(transform.position,mousePos - transform.position, Color.green);
+        Debug.DrawRay(transform.position, mousePos - transform.position, Color.green);
 
         if (agent.velocity.magnitude != 0)
         {
@@ -59,7 +55,7 @@ public class MovementMobile : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray, out hit, 100,groundMask))
+            if (Physics.Raycast(ray, out hit, 100, groundMask))
             {
                 print(hit.collider.name);
 
@@ -69,5 +65,5 @@ public class MovementMobile : MonoBehaviour
         }
     }
 
- 
+
 }
