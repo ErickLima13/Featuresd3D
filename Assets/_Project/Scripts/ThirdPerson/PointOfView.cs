@@ -1,65 +1,120 @@
+using System.Collections;
 using UnityEngine;
 
-public class PointOfView : MonoBehaviour
+namespace ThirdPerson
 {
-    // ver se vai fazer o sistema dele rotacionar
-
-    public enum Enemy
+    public class PointOfView : MonoBehaviour
     {
-        Gargoyle, Ghost
-    }
+        // ver se vai fazer o sistema dele rotacionar
 
-    public Enemy type;
-
-    private bool isPlayerInRange;
-
-    private Transform player;
-
-
-    private void Update()
-    {
-        if (isPlayerInRange)
+        public enum Enemy
         {
-            Vector3 direction = player.position - transform.position + Vector3.up; // direção
-            Ray ray = new(transform.position, direction);
-            RaycastHit hit;
+            Gargoyle, Ghost
+        }
 
-            if (Physics.Raycast(ray, out hit))
+        public Enemy type;
+
+        private bool isPlayerInRange;
+
+        private Transform player;
+
+        private WaypointPatrol patrol;
+
+        public bool isFollow;
+
+        public float waitTime;
+
+        private void Start()
+        {
+            if (type == Enemy.Ghost)
             {
-                if (hit.collider.gameObject.CompareTag("Player"))
+                patrol = GetComponentInParent<WaypointPatrol>();
+            }
+        }
+
+        private void Update()
+        {
+            if (isPlayerInRange)
+            {
+                Vector3 direction = player.position - transform.position + Vector3.up; // direção
+                Ray ray = new(transform.position, direction);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit))
                 {
-                    switch (type)
+                    if (hit.collider.gameObject.CompareTag("Player"))
                     {
-                        case Enemy.Gargoyle:
+                        switch (type)
+                        {
+                            case Enemy.Gargoyle:
 
-                            break;
-                        case Enemy.Ghost:
+                                break;
+                            case Enemy.Ghost:
 
-                            break;
+                                break;
 
+                        }
                     }
                 }
             }
         }
-    }
 
-    private void OnTriggerEnter(Collider col)
-    {
-        if (col.gameObject.CompareTag("Player"))
+        private void OnTriggerEnter(Collider col)
         {
-            player = col.transform;
-            isPlayerInRange = true;
-        }
-    }
+            if (col.gameObject.CompareTag("Player"))
+            {
+                player = col.transform;
+                isPlayerInRange = true;
 
-    private void OnTriggerExit(Collider col)
-    {
-        if (col.gameObject.CompareTag("Player"))
+                switch (type)
+                {
+                    case Enemy.Ghost:
+                        print("fantasma viu");
+                        patrol.SetFollow(player, true);
+                        StopCoroutine(DelayFollow());
+                        isFollow = false;
+                        break;
+                    case Enemy.Gargoyle:
+                        break;
+
+                }
+            }
+        }
+
+        private void OnTriggerExit(Collider col)
         {
-            player = null;
-            isPlayerInRange = false;
+            if (col.gameObject.CompareTag("Player"))
+            {
+                player = null;
+                isPlayerInRange = false;
+
+                switch (type)
+                {
+                    case Enemy.Ghost:
+
+                        if (!isFollow)
+                        {
+                            print("NAO VEJO");
+                            StartCoroutine(DelayFollow());
+                        }
+
+                        break;
+                    case Enemy.Gargoyle:
+                        break;
+
+                }
+            }
         }
+
+        private IEnumerator DelayFollow()
+        {
+            print("VAMO AI");
+            isFollow = true;
+            yield return new WaitForSeconds(waitTime);
+            patrol.SetFollow(player, false);
+            print("Trabaia");
+        }
+
+
     }
-
-
 }

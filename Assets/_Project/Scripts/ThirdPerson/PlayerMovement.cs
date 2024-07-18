@@ -1,85 +1,142 @@
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+namespace ThirdPerson
 {
-    // tentar fazer o movimento com o mouse pra deixar o jogo mobile
-
-    private Animator animator;
-    private Rigidbody rb;
-    private Vector3 movement;
-    private quaternion rotation = quaternion.identity;
-
-    public float turnSpeed;
-
-    [Header("Cam Controlls")]
-    public GameObject defaultCam;
-    public GameObject lookAtCam;
-    private Transform cam;
-    private bool isLookAt;
-       
-
-    private void Start()
+    public class PlayerMovement : MonoBehaviour
     {
-        animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody>();
-        cam = Camera.main.transform;
+        // tentar fazer o movimento com o mouse pra deixar o jogo mobile
+        // fazer o evento de (visual) exclamação ao estar perto de um inimigo
 
-        defaultCam.SetActive(true);
-        lookAtCam.SetActive(false);
-    }
+        // ver se ele vai fazer o esquema da camera (cutscene) para começar o jogo, se não fazer.
 
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(1) && !isLookAt)
+        private GameManager manager;
+
+        private Animator animator;
+        private Rigidbody rb;
+        private Vector3 movement;
+        private quaternion rotation = quaternion.identity;
+
+        public float turnSpeed;
+
+        [Header("Cam Controlls")]
+        public GameObject defaultCam;
+        public GameObject lookAtCam;
+        private Transform cam;
+        private bool isLookAt;
+
+        [Header("Audio")]
+        private AudioSource audioSource;
+
+        private void Start()
         {
-            isLookAt = true;
-            defaultCam.SetActive(false);
-            lookAtCam.SetActive(true);
-            animator.SetBool("isWalking", false);
-        }
+            animator = GetComponent<Animator>();
+            rb = GetComponent<Rigidbody>();
+            audioSource = GetComponent<AudioSource>();
+            manager = FindObjectOfType<GameManager>();
+            cam = Camera.main.transform;
 
-        if (Input.GetMouseButtonUp(1))
-        {
             defaultCam.SetActive(true);
             lookAtCam.SetActive(false);
-            StartCoroutine(ControlCam());
         }
-    }
 
-    private IEnumerator ControlCam()
-    {
-        yield return new WaitUntil(() => 
-        cam.position == defaultCam.transform.position && cam.rotation == defaultCam.transform.rotation);
+        private void Update()
+        {
+            // essa mecanica vai pra um botão na tela
 
-        isLookAt = false;
-    }
+            if (Input.GetMouseButtonDown(1) && !isLookAt)
+            {
+                isLookAt = true;
+                defaultCam.SetActive(false);
+                lookAtCam.SetActive(true);
+                animator.SetBool("isWalking", false);
+            }
 
-    private void FixedUpdate()
-    {
-        if (isLookAt) {return;}
+            if (Input.GetMouseButtonUp(1))
+            {
+                defaultCam.SetActive(true);
+                lookAtCam.SetActive(false);
+                StartCoroutine(ControlCam());
+            }
+        }
 
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        private IEnumerator ControlCam()
+        {
+            yield return new WaitUntil(() =>
+            cam.position == defaultCam.transform.position && cam.rotation == defaultCam.transform.rotation);
 
-        movement.Set(horizontal,0,vertical);
-        movement.Normalize();
+            isLookAt = false;
+        }
 
-        bool hasHorizontalInput = !Mathf.Approximately(horizontal,0);
-        bool hasVerticalInput = !Mathf.Approximately(vertical,0);
-        bool isWalking = hasHorizontalInput || hasVerticalInput;
+        private void FixedUpdate()
+        {
+            if (isLookAt)
+            {
+                return;
+            }
 
-        Vector3 desiredForward = Vector3.RotateTowards(transform.forward, movement, turnSpeed * Time.deltaTime,0);
-        rotation = Quaternion.LookRotation(desiredForward);
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
 
-        animator.SetBool("isWalking", isWalking);
-    }
+            movement.Set(horizontal, 0, vertical);
+            movement.Normalize();
 
-    private void OnAnimatorMove()
-    {
-        rb.MovePosition(rb.position + movement * animator.deltaPosition.magnitude);
-        rb.MoveRotation(rotation);
+            bool hasHorizontalInput = !Mathf.Approximately(horizontal, 0);
+            bool hasVerticalInput = !Mathf.Approximately(vertical, 0);
+            bool isWalking = hasHorizontalInput || hasVerticalInput;
+
+            if (isWalking)
+            {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.Play();
+                }
+            }
+            else
+            {
+                audioSource.Stop();
+            }
+
+            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, movement, turnSpeed * Time.deltaTime, 0);
+            rotation = Quaternion.LookRotation(desiredForward);
+
+            animator.SetBool("isWalking", isWalking);
+        }
+
+        private void OnAnimatorMove()
+        {
+            rb.MovePosition(rb.position + movement * animator.deltaPosition.magnitude);
+            rb.MoveRotation(rotation);
+        }
+
+        private void OnTriggerEnter(Collider col)
+        {
+            // trocar para um script generico
+
+            switch (col.tag)
+            {
+                case "Item":
+
+                    IdItem id = col.GetComponent<IdItem>();
+
+                    switch (id.type)
+                    {
+                        case ItemType.Gema:
+                            break;
+                        case ItemType.Key:
+                            manager.GetKey();
+                            Destroy(col.gameObject);
+                            break;
+                    }
+
+
+                    break;
+                case "Exit":
+                    manager.CheckKeys();
+                    break;
+
+            }
+        }
     }
 }

@@ -1,28 +1,78 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class WaypointPatrol : MonoBehaviour
+namespace ThirdPerson
 {
-    private NavMeshAgent agent;
-
-    public Transform[] waypoints;
-
-    private int currenWaypointId;
-
-    private void Start()
+    public class WaypointPatrol : MonoBehaviour
     {
-        agent = GetComponent<NavMeshAgent>();
-        agent.SetDestination(waypoints[0].position);
-    }
+        private NavMeshAgent agent;
 
-    private void Update()
-    {
-        if (agent.remainingDistance < agent.stoppingDistance)
+        public Transform[] waypoints;
+
+        [SerializeField] private int currenWaypointId;
+
+        public bool isRandomWay;
+
+        private Vector3 target;
+
+        private Transform player;
+
+        private bool isFollow;
+
+        private void Start()
         {
-            currenWaypointId = (currenWaypointId +1 ) % waypoints.Length;
-            agent.SetDestination(waypoints[currenWaypointId].position);
+            agent = GetComponent<NavMeshAgent>();
+
+            if (isRandomWay)
+            {
+                currenWaypointId = Random.Range(0, waypoints.Length);
+            }
+
+            target = waypoints[currenWaypointId].position;
+            agent.SetDestination(target);
+        }
+
+        private void Update()
+        {
+            if (isFollow)
+            {
+                target = player.position;
+                agent.SetDestination(target);
+            }
+            else
+            {
+                if (agent.remainingDistance < agent.stoppingDistance)
+                {
+                    if (isRandomWay)
+                    {
+                        int nextWay = Random.Range(0, waypoints.Length);
+
+                        if (nextWay == currenWaypointId)
+                        {
+                            currenWaypointId = (currenWaypointId + 1) % waypoints.Length;
+                        }
+                        else
+                        {
+                            currenWaypointId = nextWay;
+                        }
+                    }
+                    else
+                    {
+                        currenWaypointId = (currenWaypointId + 1) % waypoints.Length; // trazendo o resto da divisão
+                    }
+
+                    target = waypoints[currenWaypointId].position;
+                    agent.SetDestination(target);
+                }
+            }
+        }
+
+        public void SetFollow(Transform playerT, bool follow)
+        {
+            isFollow = follow;
+            player = playerT;
+
+
         }
     }
 }
