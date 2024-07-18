@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class InteractInInspector : MonoBehaviour
@@ -49,5 +46,5 @@ public class InteractInInspector : MonoBehaviour
 
 }
 
- 
+
 

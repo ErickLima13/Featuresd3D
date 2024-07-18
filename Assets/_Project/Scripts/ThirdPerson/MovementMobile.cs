@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -22,13 +23,27 @@ public class MovementMobile : MonoBehaviour
 
     public ParticleSystem clickEffect;
 
+    public int avgFrameRate;
+
+    public TextMeshProUGUI fps;
+
+    private AudioSource audioSource;
+
     private void Start()
     {
         cam = Camera.main;
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
     {
+        float current = 0;
+        current = Time.frameCount / Time.time;
+        avgFrameRate = (int)current;
+
+        fps.text = avgFrameRate.ToString();
+
+        print(avgFrameRate);
 
         if (!isMobile)
         {
@@ -50,6 +65,19 @@ public class MovementMobile : MonoBehaviour
         {
             print("parado");
             isWalk = false;
+        }
+
+
+        if (isWalk)
+        {
+            if (!audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+        }
+        else
+        {
+            audioSource.Stop();
         }
 
         animator.SetBool("isWalking", isWalk);
