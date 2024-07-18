@@ -540,7 +540,6 @@ GameObject:
   - component: {fileID: 482440098}
   - component: {fileID: 482440100}
   - component: {fileID: 482440101}
-  - component: {fileID: 482440102}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -692,26 +691,34 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &482440102
-MonoBehaviour:
+--- !u!1 &519026372 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3674741052935752607, guid: 549c69af39b84624b8a053537c407def,
+    type: 3}
+  m_PrefabInstance: {fileID: 1589092116}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &519026376
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 482440096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3958df44504087f498ad2b83b368e071, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  agent: {fileID: 516959502540430679}
-  groundMask:
+  m_GameObject: {fileID: 519026372}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
-  animator: {fileID: 516959502540430678}
-  isWalk: 0
-  isMobile: 1
-  movement: {x: 0, y: 0, z: 0}
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 79ec22444806b2e4dafc0b51ad057fa1, type: 3}
 --- !u!1 &756009720
 GameObject:
   m_ObjectHideFlags: 0
@@ -1002,7 +1009,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1348286551}
-  - component: {fileID: 1348286550}
+  - component: {fileID: 1348286552}
   m_Layer: 0
   m_Name: NavMesh Surface
   m_TagString: Untagged
@@ -1010,7 +1017,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1348286550
+--- !u!4 &1348286551
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348286549}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.245518, y: -23.068373, z: 5.851799}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1348286552
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1031,7 +1053,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   m_UseGeometry: 0
   m_DefaultArea: 0
-  m_GenerateLinks: 0
+  m_GenerateLinks: 1
   m_IgnoreNavMeshAgent: 1
   m_IgnoreNavMeshObstacle: 1
   m_OverrideTileSize: 0
@@ -1039,23 +1061,8 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.083333336
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 0c19e854911599d49914c31e09d7e170, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 52e5486d32b76994eaf3cea4599f982e, type: 2}
   m_BuildHeightMesh: 0
---- !u!4 &1348286551
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1348286549}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.245518, y: -23.068373, z: 5.851799}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1375430644
 GameObject:
   m_ObjectHideFlags: 0
@@ -6283,6 +6290,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 291427943}
+    - targetCorrespondingSourceObject: {fileID: 3674741052935752607, guid: 549c69af39b84624b8a053537c407def,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 519026376}
     - targetCorrespondingSourceObject: {fileID: 3674741054488177962, guid: 549c69af39b84624b8a053537c407def,
         type: 3}
       insertIndex: -1
@@ -6421,18 +6432,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 8670085633678802273}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &516959502540430678 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 6578170687729478260, guid: 9c6560e983459bf48a29512c6a242f42,
-    type: 3}
-  m_PrefabInstance: {fileID: 8670085633678802273}
-  m_PrefabAsset: {fileID: 0}
---- !u!195 &516959502540430679 stripped
-NavMeshAgent:
-  m_CorrespondingSourceObject: {fileID: 1141954696895614677, guid: 9c6560e983459bf48a29512c6a242f42,
-    type: 3}
-  m_PrefabInstance: {fileID: 8670085633678802273}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3198272938245526373
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6534,20 +6533,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1141954696895614677, guid: 9c6560e983459bf48a29512c6a242f42,
-        type: 3}
-      propertyPath: m_StoppingDistance
-      value: 0.2
-      objectReference: {fileID: 0}
     - target: {fileID: 6578170687738993084, guid: 9c6560e983459bf48a29512c6a242f42,
         type: 3}
       propertyPath: m_Name
       value: JohnLemon-Mobile
-      objectReference: {fileID: 0}
-    - target: {fileID: 6578170687738993084, guid: 9c6560e983459bf48a29512c6a242f42,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6578170687739282844, guid: 9c6560e983459bf48a29512c6a242f42,
         type: 3}
@@ -6598,6 +6587,17 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.27645898
+      objectReference: {fileID: 0}
+    - target: {fileID: 8017878019604411565, guid: 9c6560e983459bf48a29512c6a242f42,
+        type: 3}
+      propertyPath: clickEffect
+      value: 
+      objectReference: {fileID: 1698548793544531995, guid: 4437f65c363d16f46b8a28007e05ebfe,
+        type: 3}
+    - target: {fileID: 8017878019604411565, guid: 9c6560e983459bf48a29512c6a242f42,
+        type: 3}
+      propertyPath: groundMask.m_Bits
+      value: 128
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

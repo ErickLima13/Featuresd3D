@@ -19,6 +19,9 @@ public class MovementMobile : MonoBehaviour
 
     public Vector3 movement;
 
+
+    public ParticleSystem clickEffect;
+
     private void Start()
     {
         cam = Camera.main;
@@ -36,7 +39,7 @@ public class MovementMobile : MonoBehaviour
         mousePos.z = 100f;
         mousePos = cam.ScreenToWorldPoint(mousePos);
 
-        Debug.DrawRay(transform.position, mousePos - transform.position, Color.green);
+        Debug.DrawRay(cam.transform.position, mousePos - transform.position, Color.green);
 
         if (agent.velocity.magnitude != 0)
         {
@@ -61,6 +64,12 @@ public class MovementMobile : MonoBehaviour
 
                 movement = hit.point;
                 agent.SetDestination(movement);
+
+                if (clickEffect != null)
+                {
+                    ParticleSystem temp = Instantiate(clickEffect, movement += new Vector3(0, 0.1f, 0), clickEffect.transform.rotation);
+                    Destroy(temp.gameObject, 0.5f);
+                }
             }
         }
     }
