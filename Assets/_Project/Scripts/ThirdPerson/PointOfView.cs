@@ -5,7 +5,7 @@ namespace ThirdPerson
 {
     public class PointOfView : MonoBehaviour
     {
-        // ver se vai fazer o sistema dele rotacionar
+        private FieldOfView fov;
 
         public enum Enemy
         {
@@ -14,11 +14,10 @@ namespace ThirdPerson
 
         public Enemy type;
 
-        private bool isPlayerInRange;
-
         private Transform player;
 
         private WaypointPatrol patrol;
+        private Gargoyle gargoyle;
 
         public bool isFollow;
 
@@ -26,45 +25,23 @@ namespace ThirdPerson
 
         private void Start()
         {
+            fov = GetComponent<FieldOfView>();
+
             if (type == Enemy.Ghost)
             {
                 patrol = GetComponentInParent<WaypointPatrol>();
+            }
+            else
+            {
+                gargoyle = GetComponentInParent<Gargoyle>();
             }
         }
 
         private void Update()
         {
-            if (isPlayerInRange)
+            if (fov.ThePlayerIsInRange())
             {
-                Vector3 direction = player.position - transform.position + Vector3.up; // direção
-                Ray ray = new(transform.position, direction);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit))
-                {
-                    if (hit.collider.gameObject.CompareTag("Player"))
-                    {
-                        switch (type)
-                        {
-                            case Enemy.Gargoyle:
-
-                                break;
-                            case Enemy.Ghost:
-
-                                break;
-
-                        }
-                    }
-                }
-            }
-        }
-
-        private void OnTriggerEnter(Collider col)
-        {
-            if (col.gameObject.CompareTag("Player"))
-            {
-                player = col.transform;
-                isPlayerInRange = true;
+                player = fov.GetPlayer();
 
                 switch (type)
                 {
@@ -75,18 +52,14 @@ namespace ThirdPerson
                         isFollow = false;
                         break;
                     case Enemy.Gargoyle:
+                        print("Gargoyle viu");
+                        gargoyle.SetTheTarget(player,true);
                         break;
-
                 }
             }
-        }
-
-        private void OnTriggerExit(Collider col)
-        {
-            if (col.gameObject.CompareTag("Player"))
+            else
             {
                 player = null;
-                isPlayerInRange = false;
 
                 switch (type)
                 {

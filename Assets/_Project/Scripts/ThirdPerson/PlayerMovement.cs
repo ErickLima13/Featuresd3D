@@ -7,9 +7,8 @@ namespace ThirdPerson
 {
     public class PlayerMovement : MonoBehaviour
     {
-        // tentar fazer o movimento com o mouse pra deixar o jogo mobile
-        // fazer o evento de (visual) exclamação ao estar perto de um inimigo
 
+        // fazer o evento de (visual) exclamação ao estar perto de um inimigo
         // ver se ele vai fazer o esquema da camera (cutscene) para começar o jogo, se não fazer.
 
         private GameManager manager;

@@ -6,7 +6,7 @@ namespace ThirdPerson
 {
     public class MovementMobile : MonoBehaviour
     {
-        // testar build sem o post processing
+        
 
         private GameManager manager;
 
@@ -58,20 +58,20 @@ namespace ThirdPerson
             mousePos.z = 100f;
             mousePos = cam.ScreenToWorldPoint(mousePos);
 
-            Debug.DrawRay(cam.transform.position, mousePos - transform.position, Color.green);
+           // Debug.DrawRay(cam.transform.position, mousePos - transform.position, Color.green);
 
-            isWalk = agent.velocity.magnitude != 0;
-
-            if (isWalk)
+            if (agent.velocity.magnitude < 0.15f)
             {
+                isWalk = false;
+                audioSource.Stop();
+            }
+            else
+            {
+                isWalk = true;
                 if (!audioSource.isPlaying)
                 {
                     audioSource.Play();
                 }
-            }
-            else
-            {
-                audioSource.Stop();
             }
 
             animator.SetBool("isWalking", isWalk);

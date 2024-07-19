@@ -148,7 +148,9 @@ Material:
     m_Floats:
     - _Alpha: 1
     - _AlphaClip: 0
+    - _AlphaToMask: 0
     - _Blend: 0
+    - _BlendModePreserveSpecular: 1
     - _BlendOp: 0
     - _Border: 0.008
     - _BumpScale: 1
@@ -166,6 +168,7 @@ Material:
     - _DistortionStrength: 9.03
     - _DistortionStrengthScaled: 0.903
     - _DstBlend: 0
+    - _DstBlendAlpha: 0
     - _EmissionEnabled: 0
     - _EmissiveIntensity: 0
     - _EnvironmentReflections: 1
@@ -193,6 +196,7 @@ Material:
     - _SpecularHighlights: 1
     - _SpecularPower: 0.322
     - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
     - _Surface: 0
     - _UVSec: 0
     - _WorkflowMode: 1

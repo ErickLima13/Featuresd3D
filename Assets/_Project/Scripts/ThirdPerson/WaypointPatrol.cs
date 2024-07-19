@@ -71,8 +71,6 @@ namespace ThirdPerson
         {
             isFollow = follow;
             player = playerT;
-
-
         }
     }
 }

@@ -15,7 +15,7 @@ public class FieldOfView : MonoBehaviour
 
     private void Start()
     {
-        //StartCoroutine(FindTarget());
+        StartCoroutine(FindTarget());
     }
 
     private IEnumerator FindTarget()
@@ -48,6 +48,8 @@ public class FieldOfView : MonoBehaviour
             Transform target = targetInViewRadius[i].transform;
             Vector3 dirToTarget = (target.position - transform.position).normalized;
 
+            Debug.DrawRay(transform.position, dirToTarget * viewAngle, Color.green);
+
             if (Vector3.Angle(transform.forward, dirToTarget) <
                 viewAngle / 2)
             {
@@ -60,6 +62,16 @@ public class FieldOfView : MonoBehaviour
                 }
             }
         }
+    }
+
+    public bool ThePlayerIsInRange()
+    {
+        return visibleTargets.Count > 0;
+    }
+
+    public Transform GetPlayer()
+    {
+        return visibleTargets[0];
     }
 
 }
