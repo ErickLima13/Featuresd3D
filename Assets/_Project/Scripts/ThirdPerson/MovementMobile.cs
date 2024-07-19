@@ -2,105 +2,128 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class MovementMobile : MonoBehaviour
+namespace ThirdPerson
 {
-    private RaycastHit hit;
-
-    public NavMeshAgent agent;
-
-    public LayerMask groundMask;
-
-    private Camera cam;
-
-    public Animator animator;
-
-    public bool isWalk;
-
-    public bool isMobile;
-
-    public Vector3 movement;
-
-
-    public ParticleSystem clickEffect;
-
-    public int avgFrameRate;
-
-    public TextMeshProUGUI fps;
-
-    private AudioSource audioSource;
-
-    private void Start()
+    public class MovementMobile : MonoBehaviour
     {
-        cam = Camera.main;
-        audioSource = GetComponent<AudioSource>();
-    }
+        // testar build sem o post processing
 
-    private void Update()
-    {
-        float current = 0;
-        current = Time.frameCount / Time.time;
-        avgFrameRate = (int)current;
+        private GameManager manager;
 
-        fps.text = avgFrameRate.ToString();
+        private RaycastHit hit;
 
-        print(avgFrameRate);
+        public NavMeshAgent agent;
 
-        if (!isMobile)
+        public LayerMask groundMask;
+
+        private Camera cam;
+
+        public Animator animator;
+
+        public bool isWalk;
+
+        public bool isMobile;
+
+        public Vector3 movement;
+
+        public ParticleSystem clickEffect;
+
+        public int avgFrameRate;
+
+        public TextMeshProUGUI fps;
+
+        private AudioSource audioSource;
+
+        private void Start()
         {
-            return;
+            manager = FindObjectOfType<GameManager>();
+            cam = Camera.main;
+            audioSource = GetComponent<AudioSource>();
         }
 
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 100f;
-        mousePos = cam.ScreenToWorldPoint(mousePos);
-
-        Debug.DrawRay(cam.transform.position, mousePos - transform.position, Color.green);
-
-        if (agent.velocity.magnitude != 0)
+        private void Update()
         {
-            print("andando");
-            isWalk = true;
-        }
-        else
-        {
-            print("parado");
-            isWalk = false;
-        }
+            float current = 0;
+            current = Time.frameCount / Time.time;
+            avgFrameRate = (int)current;
 
+            fps.text = avgFrameRate.ToString();
 
-        if (isWalk)
-        {
-            if (!audioSource.isPlaying)
+            if (!isMobile)
             {
-                audioSource.Play();
+                return;
             }
-        }
-        else
-        {
-            audioSource.Stop();
-        }
 
-        animator.SetBool("isWalking", isWalk);
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = 100f;
+            mousePos = cam.ScreenToWorldPoint(mousePos);
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Debug.DrawRay(cam.transform.position, mousePos - transform.position, Color.green);
 
-            if (Physics.Raycast(ray, out hit, 100, groundMask))
+            isWalk = agent.velocity.magnitude != 0;
+
+            if (isWalk)
             {
-                print(hit.collider.name);
-
-                movement = hit.point;
-                agent.SetDestination(movement);
-
-                if (clickEffect != null)
+                if (!audioSource.isPlaying)
                 {
-                    ParticleSystem temp = Instantiate(clickEffect, movement += new Vector3(0, 0.1f, 0), clickEffect.transform.rotation);
-                    Destroy(temp.gameObject, 0.5f);
+                    audioSource.Play();
+                }
+            }
+            else
+            {
+                audioSource.Stop();
+            }
+
+            animator.SetBool("isWalking", isWalk);
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                if (Physics.Raycast(ray, out hit, 100, groundMask))
+                {
+                    movement = hit.point;
+                    agent.SetDestination(movement);
+
+                    if (clickEffect != null)
+                    {
+                        ParticleSystem temp = Instantiate(clickEffect, movement += new Vector3(0, 0.1f, 0), clickEffect.transform.rotation);
+                        Destroy(temp.gameObject, 0.5f);
+                    }
                 }
             }
         }
+
+        private void OnTriggerEnter(Collider col)
+        {
+            // trocar para um script generico
+
+            switch (col.tag)
+            {
+                case "Item":
+
+                    IdItem id = col.GetComponent<IdItem>();
+
+                    switch (id.type)
+                    {
+                        case ItemType.Gema:
+                            break;
+                        case ItemType.Key:
+                            manager.GetKey();
+                            Destroy(col.gameObject);
+                            break;
+                    }
+
+
+                    break;
+                case "Exit":
+                    manager.CheckKeys();
+                    break;
+
+            }
+        }
+
+
+
     }
-
-
 }
