@@ -1,7 +1,7 @@
 using System.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 namespace ThirdPerson
 {
@@ -76,14 +76,8 @@ namespace ThirdPerson
                 return;
             }
 
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-
-            movement.Set(horizontal, 0, vertical);
-            movement.Normalize();
-
-            bool hasHorizontalInput = !Mathf.Approximately(horizontal, 0);
-            bool hasVerticalInput = !Mathf.Approximately(vertical, 0);
+            bool hasHorizontalInput = !Mathf.Approximately(movement.x, 0);
+            bool hasVerticalInput = !Mathf.Approximately(movement.y, 0);
             bool isWalking = hasHorizontalInput || hasVerticalInput;
 
             if (isWalking)
@@ -98,15 +92,20 @@ namespace ThirdPerson
                 audioSource.Stop();
             }
 
-            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, movement, turnSpeed * Time.deltaTime, 0);
+            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, new Vector3(movement.x, 0, movement.y), turnSpeed * Time.deltaTime, 0);
             rotation = Quaternion.LookRotation(desiredForward);
 
             animator.SetBool("isWalking", isWalking);
         }
 
+        public void SetMovement(InputAction.CallbackContext value)
+        {
+            movement = value.ReadValue<Vector2>();
+        }
+
         private void OnAnimatorMove()
         {
-            rb.MovePosition(rb.position + movement * animator.deltaPosition.magnitude);
+            rb.MovePosition(rb.position + new Vector3(movement.x,0,movement.y) * animator.deltaPosition.magnitude);
             rb.MoveRotation(rotation);
         }
 
