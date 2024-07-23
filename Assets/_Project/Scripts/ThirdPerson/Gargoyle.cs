@@ -30,6 +30,8 @@ public class Gargoyle : MonoBehaviour
         }
     }
 
+
+
     private void Update()
     {
         if (!canRotate)

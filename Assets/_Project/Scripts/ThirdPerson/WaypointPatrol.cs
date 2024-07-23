@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,7 +8,7 @@ namespace ThirdPerson
     {
         private NavMeshAgent agent;
 
-        public Transform[] waypoints;
+        public List<Transform> waypoints = new();
 
         [SerializeField] private int currenWaypointId;
 
@@ -17,7 +18,7 @@ namespace ThirdPerson
 
         private Transform player;
 
-        private bool isFollow;
+        private bool hasPlayer;
 
         private void Start()
         {
@@ -25,7 +26,7 @@ namespace ThirdPerson
 
             if (isRandomWay)
             {
-                currenWaypointId = Random.Range(0, waypoints.Length);
+                currenWaypointId = Random.Range(0, waypoints.Count);
             }
 
             target = waypoints[currenWaypointId].position;
@@ -34,10 +35,17 @@ namespace ThirdPerson
 
         private void Update()
         {
-            if (isFollow)
+            if (hasPlayer)
             {
                 target = player.position;
                 agent.SetDestination(target);
+
+                if (agent.remainingDistance < agent.stoppingDistance)
+                {
+                    player.GetComponent<PlayerMovement>().SetPlayer(); // arrumar isso aqui, fazer o um fade na tela e o fantasma parar de seguir
+                    print("peguei o player");
+                    hasPlayer = false;
+                }
             }
             else
             {
@@ -45,11 +53,11 @@ namespace ThirdPerson
                 {
                     if (isRandomWay)
                     {
-                        int nextWay = Random.Range(0, waypoints.Length);
+                        int nextWay = Random.Range(0, waypoints.Count);
 
                         if (nextWay == currenWaypointId)
                         {
-                            currenWaypointId = (currenWaypointId + 1) % waypoints.Length;
+                            currenWaypointId = (currenWaypointId + 1) % waypoints.Count;
                         }
                         else
                         {
@@ -58,7 +66,7 @@ namespace ThirdPerson
                     }
                     else
                     {
-                        currenWaypointId = (currenWaypointId + 1) % waypoints.Length; // trazendo o resto da divisão
+                        currenWaypointId = (currenWaypointId + 1) % waypoints.Count; // trazendo o resto da divisão
                     }
 
                     target = waypoints[currenWaypointId].position;
@@ -67,9 +75,9 @@ namespace ThirdPerson
             }
         }
 
-        public void SetFollow(Transform playerT, bool follow)
+        public void SetFollow(Transform playerT, bool hPlayer)
         {
-            isFollow = follow;
+            hasPlayer = hPlayer;
             player = playerT;
         }
     }

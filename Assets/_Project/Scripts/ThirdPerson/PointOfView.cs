@@ -19,8 +19,6 @@ namespace ThirdPerson
         private WaypointPatrol patrol;
         private Gargoyle gargoyle;
 
-        public bool isFollow;
-
         public float waitTime;
 
         private void Start()
@@ -49,11 +47,11 @@ namespace ThirdPerson
                         print("fantasma viu");
                         patrol.SetFollow(player, true);
                         StopCoroutine(DelayFollow());
-                        isFollow = false;
                         break;
                     case Enemy.Gargoyle:
                         print("Gargoyle viu");
-                        gargoyle.SetTheTarget(player,true);
+                        gargoyle.SetTheTarget(player, true);
+                        StartCoroutine(DelayToPatrol());
                         break;
                 }
             }
@@ -64,25 +62,20 @@ namespace ThirdPerson
                 switch (type)
                 {
                     case Enemy.Ghost:
-
-                        if (!isFollow)
-                        {
-                            print("NAO VEJO");
-                            StartCoroutine(DelayFollow());
-                        }
-
+                        StartCoroutine(DelayFollow());
                         break;
-                    case Enemy.Gargoyle:
-                        break;
-
                 }
             }
         }
 
+        private IEnumerator DelayToPatrol()
+        {
+            yield return new WaitForSeconds(3f);
+            gargoyle.SetTheTarget(player, false);
+        }
+
         private IEnumerator DelayFollow()
         {
-            print("VAMO AI");
-            isFollow = true;
             yield return new WaitForSeconds(waitTime);
             patrol.SetFollow(player, false);
             print("Trabaia");

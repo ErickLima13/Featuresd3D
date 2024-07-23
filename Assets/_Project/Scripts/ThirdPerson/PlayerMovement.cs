@@ -29,6 +29,8 @@ namespace ThirdPerson
         [Header("Audio")]
         private AudioSource audioSource;
 
+        public Vector3 startPos;
+
         private void Start()
         {
             animator = GetComponent<Animator>();
@@ -39,6 +41,7 @@ namespace ThirdPerson
 
             defaultCam.SetActive(true);
             lookAtCam.SetActive(false);
+            startPos = transform.position;
         }
 
         private void Update()
@@ -96,6 +99,11 @@ namespace ThirdPerson
             rotation = Quaternion.LookRotation(desiredForward);
 
             animator.SetBool("isWalking", isWalking);
+        }
+
+        public void SetPlayer()
+        {
+            transform.position = startPos;
         }
 
         public void SetMovement(InputAction.CallbackContext value)

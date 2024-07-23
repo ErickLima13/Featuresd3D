@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  isFollow: 0
   waitTime: 3
 --- !u!114 &2045464303507487586
 MonoBehaviour:
@@ -61,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewRadius: 3
-  viewAngle: 50
+  viewAngle: 45
   visibleTargets: []
   targetMask:
     serializedVersion: 2
