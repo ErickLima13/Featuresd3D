@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -7,6 +8,7 @@ namespace ThirdPerson
 {
     public class PlayerMovement : MonoBehaviour
     {
+        public event Action OnGetPlayerEvent;
 
         // fazer o evento de (visual) exclamação ao estar perto de um inimigo
         // ver se ele vai fazer o esquema da camera (cutscene) para começar o jogo, se não fazer.
@@ -74,6 +76,11 @@ namespace ThirdPerson
 
         private void FixedUpdate()
         {
+            if (manager.NonGameplay())
+            {
+                return;
+            }
+
             if (isLookAt)
             {
                 return;
@@ -101,9 +108,9 @@ namespace ThirdPerson
             animator.SetBool("isWalking", isWalking);
         }
 
-        public void SetPlayer()
+        public void IWasTaken()
         {
-            transform.position = startPos;
+            OnGetPlayerEvent?.Invoke();
         }
 
         public void SetMovement(InputAction.CallbackContext value)
@@ -113,7 +120,7 @@ namespace ThirdPerson
 
         private void OnAnimatorMove()
         {
-            rb.MovePosition(rb.position + new Vector3(movement.x,0,movement.y) * animator.deltaPosition.magnitude);
+            rb.MovePosition(rb.position + new Vector3(movement.x, 0, movement.y) * animator.deltaPosition.magnitude);
             rb.MoveRotation(rotation);
         }
 

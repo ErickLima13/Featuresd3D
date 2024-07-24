@@ -20,9 +20,12 @@ namespace ThirdPerson
 
         private bool hasPlayer;
 
+        private PlayerMovement PlayerMovement;
+
         private void Start()
         {
             agent = GetComponent<NavMeshAgent>();
+            PlayerMovement = FindObjectOfType<PlayerMovement>();
 
             if (isRandomWay)
             {
@@ -37,14 +40,15 @@ namespace ThirdPerson
         {
             if (hasPlayer)
             {
-                target = player.position;
-                agent.SetDestination(target);
-
                 if (agent.remainingDistance < agent.stoppingDistance)
                 {
-                    player.GetComponent<PlayerMovement>().SetPlayer(); // arrumar isso aqui, fazer o um fade na tela e o fantasma parar de seguir
+                    PlayerMovement.IWasTaken();
                     print("peguei o player");
-                    hasPlayer = false;
+                }
+                else
+                {
+                    target = player.position;
+                    agent.SetDestination(target);
                 }
             }
             else
