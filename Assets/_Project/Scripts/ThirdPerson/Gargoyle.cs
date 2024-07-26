@@ -1,13 +1,13 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using ThirdPerson;
 using UnityEngine;
 
 public class Gargoyle : MonoBehaviour
 {
-    public List<WaypointPatrol> ghosts = new List<WaypointPatrol>();
+    public event Action<Transform> OnGargoyleSeeThePlayer;
 
+    private FieldOfView fov;
     public Quaternion[] rotations;
     public float rotateTime;
     public int idRot;
@@ -17,23 +17,21 @@ public class Gargoyle : MonoBehaviour
 
     public bool changeDirection;
 
+    private PlayerMovement playerMovement;
+
     private void Start()
     {
-        ghosts = FindObjectsOfType<WaypointPatrol>().ToList();
+        fov = GetComponentInChildren<FieldOfView>();
+        playerMovement = FindObjectOfType<PlayerMovement>();
     }
-
-    public void SetTheTarget(Transform target, bool value)
-    {
-        foreach (WaypointPatrol wp in ghosts)
-        {
-            wp.SetFollow(target, value);
-        }
-    }
-
-
 
     private void Update()
     {
+        if (fov.ThePlayerIsInRange() && !playerMovement.alreadyGot)
+        {
+            OnGargoyleSeeThePlayer?.Invoke(fov.GetPlayer());
+        }
+
         if (!canRotate)
         {
             Quaternion rot = Quaternion.Slerp(transform.rotation, rotations[idRot], speedRot * Time.deltaTime);
@@ -47,12 +45,10 @@ public class Gargoyle : MonoBehaviour
                 StartCoroutine(DelayRotate());
             }
         }
-
     }
 
     private IEnumerator DelayRotate()
     {
-
         if (!changeDirection)
         {
             if (idRot >= rotations.Length - 1)

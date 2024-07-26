@@ -33,6 +33,9 @@ namespace ThirdPerson
 
         public Vector3 startPos;
 
+        public bool alreadyGot;
+
+
         private void Start()
         {
             animator = GetComponent<Animator>();
@@ -48,7 +51,7 @@ namespace ThirdPerson
 
         private void Update()
         {
-            // essa mecanica vai pra um botão na tela
+            // essa mecanica vai pra um botão na tela, um botão no controle
 
             if (Input.GetMouseButtonDown(1) && !isLookAt)
             {
@@ -111,6 +114,7 @@ namespace ThirdPerson
         public void IWasTaken()
         {
             OnGetPlayerEvent?.Invoke();
+            alreadyGot = true;
         }
 
         public void SetMovement(InputAction.CallbackContext value)

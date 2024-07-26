@@ -6,7 +6,7 @@ namespace ThirdPerson
 {
     public class MovementMobile : MonoBehaviour
     {
-        
+
 
         private GameManager manager;
 
@@ -58,7 +58,7 @@ namespace ThirdPerson
             mousePos.z = 100f;
             mousePos = cam.ScreenToWorldPoint(mousePos);
 
-           // Debug.DrawRay(cam.transform.position, mousePos - transform.position, Color.green);
+            // Debug.DrawRay(cam.transform.position, mousePos - transform.position, Color.green);
 
             if (agent.velocity.magnitude < 0.15f)
             {

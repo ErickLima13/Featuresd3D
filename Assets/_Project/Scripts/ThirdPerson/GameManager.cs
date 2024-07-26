@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 namespace ThirdPerson
@@ -12,12 +13,14 @@ namespace ThirdPerson
     {
         // regra de 3 - 3 vidas, 3 gargulas, 3 fantasmas, 3 chaves (fazer fade de vitoria)
 
-        private PlayerMovement playerMovement;
+        public PlayerMovement playerMovement;
 
         [SerializeField] private GameState currentState;
 
-        public int keys;
+        [Header("keys")]
+        public int totalKeys;
         public int silverKey; // pode ser get set, pra mostrar na hud
+        public TextMeshProUGUI countKeysTxt;
 
         [SerializeField] private CanvasGroup panelImage;
         [SerializeField] private AudioSource sfx;
@@ -25,15 +28,51 @@ namespace ThirdPerson
 
         private bool isDone;
 
+        public Gargoyle[] gargoyles;
+        public GhostController[] ghostControllers;
+
         private void Start()
         {
             playerMovement = FindObjectOfType<PlayerMovement>();
             playerMovement.OnGetPlayerEvent += Fade;
+
+            gargoyles = FindObjectsOfType<Gargoyle>();
+            ghostControllers = FindObjectsOfType<GhostController>();
+
+            foreach (Gargoyle g in gargoyles)
+            {
+                g.OnGargoyleSeeThePlayer += SetCommand;
+            }
+
         }
 
         private void OnDestroy()
         {
             playerMovement.OnGetPlayerEvent -= Fade;
+
+            foreach (Gargoyle g in gargoyles)
+            {
+                g.OnGargoyleSeeThePlayer -= SetCommand;
+            }
+        }
+
+        private void SetCommand(Transform p)
+        {
+            foreach (GhostController gc in ghostControllers)
+            {
+                gc.SetToFollowPlayer(true, p);
+                StartCoroutine(WaitGhosts());
+            }
+        }
+
+        private IEnumerator WaitGhosts()
+        {
+            yield return new WaitForSeconds(1f);
+
+            foreach (GhostController gc in ghostControllers)
+            {
+                gc.SetToFollowPlayer(false, null);
+            }
         }
 
         public void Fade()
@@ -50,8 +89,8 @@ namespace ThirdPerson
 
             while (panelImage.alpha < 1.0f)
             {
-                panelImage.alpha += 0.3f * Time.deltaTime;
-                yield return new WaitForSeconds(0.05f);
+                panelImage.alpha += 0.8f * Time.deltaTime;
+                yield return new WaitForSeconds(0.01f);
 
                 if (isDone)
                 {
@@ -69,7 +108,7 @@ namespace ThirdPerson
             {
                 while (panelImage.alpha != 0f)
                 {
-                    panelImage.alpha -= 0.3f * Time.deltaTime;
+                    panelImage.alpha -= 0.8f * Time.deltaTime;
                     yield return new WaitForSeconds(0.01f);
                 }
             }
@@ -77,6 +116,10 @@ namespace ThirdPerson
             yield return new WaitWhile(() => panelImage.alpha != 0f);
 
             currentState = GameState.Gameplay;
+
+            yield return new WaitForEndOfFrame();
+
+            playerMovement.alreadyGot = false;
         }
 
         public bool NonGameplay()
@@ -86,7 +129,7 @@ namespace ThirdPerson
 
         public void CheckKeys()
         {
-            if (silverKey >= keys)
+            if (silverKey >= totalKeys)
             {
                 print("Passou");
             }
@@ -99,6 +142,7 @@ namespace ThirdPerson
         public void GetKey()
         {
             silverKey++;
+            countKeysTxt.text = silverKey + " / " + totalKeys;
         }
 
 
