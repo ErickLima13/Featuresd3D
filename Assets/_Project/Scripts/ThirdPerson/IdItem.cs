@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ThirdPerson
 {
     public enum ItemType
     {
-        Gema,Key
+        Gema, Key
     }
 
     public class IdItem : MonoBehaviour
