@@ -1,12 +1,14 @@
+using System;
 using System.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 namespace ThirdPerson
 {
     public class PlayerMovement : MonoBehaviour
     {
+        public event Action OnGetPlayerEvent;
 
         // fazer o evento de (visual) exclamação ao estar perto de um inimigo
         // ver se ele vai fazer o esquema da camera (cutscene) para começar o jogo, se não fazer.
@@ -29,6 +31,11 @@ namespace ThirdPerson
         [Header("Audio")]
         private AudioSource audioSource;
 
+        public Vector3 startPos;
+
+        public bool alreadyGot;
+
+
         private void Start()
         {
             animator = GetComponent<Animator>();
@@ -39,11 +46,12 @@ namespace ThirdPerson
 
             defaultCam.SetActive(true);
             lookAtCam.SetActive(false);
+            startPos = transform.position;
         }
 
         private void Update()
         {
-            // essa mecanica vai pra um botão na tela
+            // essa mecanica vai pra um botão na tela, um botão no controle
 
             if (Input.GetMouseButtonDown(1) && !isLookAt)
             {
@@ -71,19 +79,18 @@ namespace ThirdPerson
 
         private void FixedUpdate()
         {
+            if (manager.NonGameplay())
+            {
+                return;
+            }
+
             if (isLookAt)
             {
                 return;
             }
 
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-
-            movement.Set(horizontal, 0, vertical);
-            movement.Normalize();
-
-            bool hasHorizontalInput = !Mathf.Approximately(horizontal, 0);
-            bool hasVerticalInput = !Mathf.Approximately(vertical, 0);
+            bool hasHorizontalInput = !Mathf.Approximately(movement.x, 0);
+            bool hasVerticalInput = !Mathf.Approximately(movement.y, 0);
             bool isWalking = hasHorizontalInput || hasVerticalInput;
 
             if (isWalking)
@@ -98,15 +105,26 @@ namespace ThirdPerson
                 audioSource.Stop();
             }
 
-            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, movement, turnSpeed * Time.deltaTime, 0);
+            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, new Vector3(movement.x, 0, movement.y), turnSpeed * Time.deltaTime, 0);
             rotation = Quaternion.LookRotation(desiredForward);
 
             animator.SetBool("isWalking", isWalking);
         }
 
+        public void IWasTaken()
+        {
+            OnGetPlayerEvent?.Invoke();
+            alreadyGot = true;
+        }
+
+        public void SetMovement(InputAction.CallbackContext value)
+        {
+            movement = value.ReadValue<Vector2>();
+        }
+
         private void OnAnimatorMove()
         {
-            rb.MovePosition(rb.position + movement * animator.deltaPosition.magnitude);
+            rb.MovePosition(rb.position + new Vector3(movement.x, 0, movement.y) * animator.deltaPosition.magnitude);
             rb.MoveRotation(rotation);
         }
 
